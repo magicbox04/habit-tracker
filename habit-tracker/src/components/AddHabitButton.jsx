@@ -1,4 +1,5 @@
 import { AddHabitModal } from "./AddHabitModal";
+
 export function AddHabitButton ({isAddModalOpen, setIsAddModalOpen, habits, setHabits}) {
 
     return (

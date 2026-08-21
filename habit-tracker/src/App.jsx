@@ -1,21 +1,31 @@
 import { useState } from 'react'
-import { WeekProgress } from './components/WeekProgress'
-import { AddHabitButton } from './components/AddHabitButton'
-import  { TodayHabitList } from './components/TodayHabitList'
+import { Routes, Route } from 'react-router-dom'
+import { HomePage } from './pages/home/HomePage'
+import { ManagePage } from './pages/manage/ManagePage'
 import './App.css'
 
 export function App() {
     const [habits, setHabits] = useState([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [selectedHabitId, setSelectedHabitId] = useState(null);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+
     return (
-        <div>
-            <WeekProgress habits={habits} isCalendarOpen={isCalendarOpen} setIsCalendarOpen={setIsCalendarOpen} />
-            <AddHabitButton habits={habits} setHabits={setHabits} isAddModalOpen={isAddModalOpen} setIsAddModalOpen={setIsAddModalOpen} />
-            <TodayHabitList habits={habits} setHabits={setHabits} selectedHabitId={selectedHabitId} setSelectedHabitId={setSelectedHabitId} />
-            <pre>{JSON.stringify(habits, null, 2)}</pre>
-        </div>
+        <Routes>
+            <Route path="/" element=
+                {
+                    <HomePage
+                        habits={habits}
+                        setHabits={setHabits}
+                        isAddModalOpen={isAddModalOpen}
+                        setIsAddModalOpen={setIsAddModalOpen}
+                        isCalendarOpen={isCalendarOpen}
+                        setIsCalendarOpen={setIsCalendarOpen}
+                    />
+                } />
+            <Route path="/manage" element={<ManagePage
+                habits={habits}
+                setHabits={setHabits} />} />
+        </Routes>
     );
 }

@@ -37,7 +37,7 @@ export function AddHabitModal({ setIsAddModalOpen, habits, setHabits }) {
                     placeholder="Input Habit info" 
                     
                     />
-                    {DAYS.map((day) => (
+                    {DAYS.map((day) =>  (
                         <button
                             key={day}
                             type="button"
