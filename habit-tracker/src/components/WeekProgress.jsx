@@ -1,7 +1,45 @@
-export function WeekProgress({ habits, isCalendarOpen, setIsCalendarOpen }) {
+import dayjs from "dayjs";
+import isoWeek from 'dayjs/plugin/isoWeek';
+dayjs.extend(isoWeek);
+
+export function WeekProgress({ habits}) {
+    dayjs.extend(isoWeek);
+
+    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const monday = dayjs().startOf('isoWeek');
+
+    function getDayStatus(dayName, dateStr) {
+        const habitsForDay = habits.filter(h => h.expectedDays.includes(dayName));
+        const completedCount = habitsForDay.filter(h => h.completedDates.includes(dateStr)).length;
+
+        if (habitsForDay.length === 0) {
+            return "habit-no-habit-circle"; // 해당 요일에 habit 자체가 없음
+        }
+        else if (completedCount === 0) {
+            return "habit-empty-circle"
+        }
+        else if (habitsForDay.length === completedCount) {
+            return "habit-completed-circle"
+        }
+        else if (habitsForDay.length > completedCount) {
+            return "habit-partial-circle"
+        }
+        
+    }
+
     return (
         <div>
-            여기 오늘의 주관 프로그래스 들어갈 예정
+            {
+                DAYS.map((day, i)=>(
+                    <button
+                    key={day}
+                    className={getDayStatus(day,  monday.add(i, 'day').format('YYYY-MM-DD') )}
+                    >
+                    
+                    </button>
+                ) 
+                )
+            }
         </div>
     );
 }
