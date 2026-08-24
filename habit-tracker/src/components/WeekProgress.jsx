@@ -13,7 +13,7 @@ export function WeekProgress({ habits}) {
         const completedCount = habitsForDay.filter(h => h.completedDates.includes(dateStr)).length;
 
         if (habitsForDay.length === 0) {
-            return "habit-no-habit-circle"; // 해당 요일에 habit 자체가 없음
+            return "habit-no-habit-circle"; 
         }
         else if (completedCount === 0) {
             return "habit-empty-circle"
