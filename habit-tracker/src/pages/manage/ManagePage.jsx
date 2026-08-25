@@ -4,7 +4,10 @@ export function ManagePage({ habits, setHabits }) {
     const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const [editingHabitId, setEditingHabitId] = useState(null);
 
-    function toggleDay(day, habitId) {
+    async function toggleDay(day, habitId) {
+
+        
+
         const updatedHabits = habits.map((h) => {
             if (h.id !== habitId) {
                 return h;
@@ -17,15 +20,30 @@ export function ManagePage({ habits, setHabits }) {
             }
             return { ...h, expectedDays: newExpectedDays };
         });
+
+        const updatedHabit = updatedHabits.find((h) => h.id === habitId)
+
+        await fetch (`/api/habits/${habitId}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                name: updatedHabit.name,
+                expectedDays: updatedHabit.newExpectedDays,
+                completedDates: updatedHabit.completedDates
+            })
+        })
         setHabits(updatedHabits);
     }
 
 
 
-    function deleteHabit(habitId) {
-        let newHabitlist = habits.filter(item => item.id !== habitId)
-
-        setHabits(newHabitlist)
+    async function deleteHabit(habitId) {
+        await fetch (`/api/habits/${habitId}`, {
+            method: 'DELETE'
+        })
+        
+        const newHabitlist = habits.filter(item => item.id !== habitId);
+        setHabits(newHabitlist);
     }
 
     return (

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { HomePage } from './pages/home/HomePage'
 import { ManagePage } from './pages/manage/ManagePage'
@@ -9,6 +9,14 @@ export function App() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+    useEffect(() => {
+        async function fetchHabits(){
+            const response = await fetch('/api/habits');
+            const data = await response.json();
+            setHabits(data);
+        }
+        fetchHabits();
+    }, []);
 
     return (
         <Routes>

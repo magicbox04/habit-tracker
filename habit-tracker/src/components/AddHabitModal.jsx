@@ -14,14 +14,17 @@ export function AddHabitModal({ setIsAddModalOpen, habits, setHabits }) {
         }
     }
 
-    function handleSave() {
-        const newHabit = {
-            id: crypto.randomUUID(),
-            name: name,
-            completedDates: [],
-            expectedDays: expectedDays
-        };
-
+    async function handleSave() {
+        const response = await fetch ('/api/habits', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                name: name,
+                expectedDays: expectedDays
+            })
+        })
+        
+        const newHabit = await response.json();
         setHabits([...habits, newHabit]);
         setIsAddModalOpen(false);
     }
