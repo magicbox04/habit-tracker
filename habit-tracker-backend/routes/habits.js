@@ -1,5 +1,6 @@
 import express from 'express';
 import pool from '../db.js';
+import checkAuth from '../middleware/authMiddleware.js';
 
 function toCamelCase(h) {
     return {
@@ -11,9 +12,9 @@ function toCamelCase(h) {
 }
 const router = express.Router();
 // = GET /api/habits
-router.get('/', async (req, res) => {
+router.get('/', checkAuth, async (req, res) => {
     try {  
-        const result = await pool.query('SELECT * FROM habits');
+        const result = await pool.query('SELECT * FROM habits WHERE user_id = $1', [req.userId]);
         const habits = result.rows.map(toCamelCase);
         res.json(habits);
 
@@ -24,9 +25,9 @@ router.get('/', async (req, res) => {
 
 });        
 // = GET /api/habits/5
-router.get('/:id', async (req, res) => { 
+router.get('/:id', checkAuth, async (req, res) => { 
     try {
-        const result = await pool.query('SELECT * FROM habits WHERE id = $1', [req.params.id]);
+        const result = await pool.query('SELECT * FROM habits WHERE id = $1 AND user_id = $2', [req.params.id, req.userId]);
         const habits = result.rows.map(toCamelCase);
 
         res.json(habits);
@@ -36,13 +37,13 @@ router.get('/:id', async (req, res) => {
     }
  });      
  // = POST /api/habits
-router.post('/', async (req, res) => {
+router.post('/', checkAuth, async (req, res) => {
     try {
         const { name, expectedDays } = req.body; 
         
         const result = await pool.query(
-            'INSERT INTO habits (name, expected_days, completed_dates) VALUES ($1, $2, $3) RETURNING *',
-            [name, expectedDays, []]  // 배열 순서 = $1, $2, $3 순서
+            'INSERT INTO habits (name, expected_days, completed_dates, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
+            [name, expectedDays, [], req.userId]  
         );
         const habits = result.rows.map(toCamelCase);
 
@@ -54,10 +55,10 @@ router.post('/', async (req, res) => {
     }
 });  
 // = PUT /api/habits/5 
-router.put('/:id', async (req, res) => {
+router.put('/:id', checkAuth, async (req, res) => {
     const { name, expectedDays, completedDates } = req.body;
     try {
-        const result = await pool.query('UPDATE habits SET name = $1, expected_days = $2, completed_dates = $3 WHERE id = $4 RETURNING *', [name, expectedDays, completedDates, req.params.id]);
+        const result = await pool.query('UPDATE habits SET name = $1, expected_days = $2, completed_dates = $3 WHERE id = $4 AND user_id = $5 RETURNING *', [name, expectedDays, completedDates, req.params.id, req.userId]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'id not found' });
         }
@@ -72,9 +73,9 @@ router.put('/:id', async (req, res) => {
  });   
 
  // = DELETE /api/habits/5
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkAuth, async (req, res) => {
     try {
-    const result = await pool.query('DELETE FROM habits WHERE id = $1 RETURNING *', [req.params.id]);
+    const result = await pool.query('DELETE FROM habits WHERE id = $1 AND user_id = $2 RETURNING *', [req.params.id, req.userId]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'id not found' });
         }
