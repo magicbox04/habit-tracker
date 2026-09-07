@@ -5,7 +5,7 @@ export function TodayHabitList({ habits, setHabits }) {
     const todayHabits = habits.filter((habit) => habit.expectedDays.includes(todayDay));
     const todayFull = dayjs().format('YYYY-MM-DD')
 
-    function toggleComplete(habitId) {
+    async function toggleComplete(habitId) {
 
         const updatedHabits = habits.map((h) => {
             if (h.id !== habitId) {
@@ -23,6 +23,18 @@ export function TodayHabitList({ habits, setHabits }) {
 
             return { ...h, completedDates: newCompletedDates };
         });
+
+        const updatedHabit = updatedHabits.find((h) => h.id === habitId)
+
+        await fetch(`/api/habits/${updatedHabit.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: updatedHabit.name,
+                expectedDays: updatedHabit.expectedDays,
+                completedDates: updatedHabit.completedDates
+            })
+        })
 
         setHabits(updatedHabits);
     }

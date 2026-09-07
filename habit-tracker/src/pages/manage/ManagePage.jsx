@@ -6,8 +6,6 @@ export function ManagePage({ habits, setHabits }) {
 
     async function toggleDay(day, habitId) {
 
-        
-
         const updatedHabits = habits.map((h) => {
             if (h.id !== habitId) {
                 return h;
@@ -23,12 +21,12 @@ export function ManagePage({ habits, setHabits }) {
 
         const updatedHabit = updatedHabits.find((h) => h.id === habitId)
 
-        await fetch (`/api/habits/${habitId}`, {
+        await fetch(`/api/habits/${habitId}`, {
             method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 name: updatedHabit.name,
-                expectedDays: updatedHabit.newExpectedDays,
+                expectedDays: updatedHabit.expectedDays,
                 completedDates: updatedHabit.completedDates
             })
         })
@@ -38,10 +36,10 @@ export function ManagePage({ habits, setHabits }) {
 
 
     async function deleteHabit(habitId) {
-        await fetch (`/api/habits/${habitId}`, {
+        await fetch(`/api/habits/${habitId}`, {
             method: 'DELETE'
         })
-        
+
         const newHabitlist = habits.filter(item => item.id !== habitId);
         setHabits(newHabitlist);
     }
@@ -56,14 +54,28 @@ export function ManagePage({ habits, setHabits }) {
                             className={editingHabitId === habit.id ? "individual-habit-container-for-all-edit" : "individual-habit-container-for-all"}
                         >
                             {editingHabitId === habit.id ? (
-                                <input value={habit.name} onChange={(e) => {
+                                <input value={habit.name} onChange={async (e) => {
+                                    const newName = e.target.value;
+
                                     const updatedHabits = habits.map((h) => {
                                         if (h.id !== habit.id) {
                                             return h;
                                         }
-                                        let newName = e.target.value;
                                         return { ...h, name: newName };
                                     });
+
+                                    const updatedHabit = updatedHabits.find((h)=> h.id === habit.id);
+
+
+                                    await fetch(`/api/habits/${habit.id}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            name: updatedHabit.name,
+                                            expectedDays: updatedHabit.expectedDays,
+                                            completedDates: updatedHabit.completedDates
+                                        })
+                                    })
                                     setHabits(updatedHabits);
                                 }
                                 } />
@@ -71,18 +83,18 @@ export function ManagePage({ habits, setHabits }) {
                                 <span>{habit.name}</span>)}
 
                             {
-                                editingHabitId === habit.id && DAYS.map((day)=>(
+                                editingHabitId === habit.id && DAYS.map((day) => (
                                     <button
-                                        className = {habit.expectedDays.includes(day) ? "expected-day-button-pressed-edit" : "expected-day-button-edit"}
+                                        className={habit.expectedDays.includes(day) ? "expected-day-button-pressed-edit" : "expected-day-button-edit"}
                                         key={day}
                                         type="button"
-                                        onClick = {()=> (toggleDay(day, habit.id))}
-                                        >
-                                            {day}
+                                        onClick={() => (toggleDay(day, habit.id))}
+                                    >
+                                        {day}
                                     </button>
 
                                 ))
-                            }    
+                            }
 
                             <button onClick={() => {
                                 if (editingHabitId === habit.id) {
@@ -106,7 +118,7 @@ export function ManagePage({ habits, setHabits }) {
                     );
                 })}
             </div>
-            <ToHomePageButton/>
+            <ToHomePageButton />
         </>
     );
 }
