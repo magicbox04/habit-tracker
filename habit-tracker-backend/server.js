@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './db.js';
 import habitsRouter from './routes/habits.js';
-
+import authRouter from './routes/auth.js';
 dotenv.config();
 
 const app = express();
@@ -22,6 +22,8 @@ app.get('/api/test', async (req, res) => {
     }
 });
 app.use('/api/habits', habitsRouter);
+app.use('/api/auth', authRouter);
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
