@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom'
 import { ToSignUpPageButton } from "./ToSignUpPageButton";
-export function LoginPage() {
+export function LoginPage({fetchHabits}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -17,6 +17,7 @@ export function LoginPage() {
         
         if (response.ok) {  
             localStorage.setItem('token', data.token);
+            await fetchHabits();
             navigate('/'); 
         }
     }

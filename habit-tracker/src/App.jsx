@@ -4,32 +4,35 @@ import { HomePage } from './pages/home/HomePage'
 import { ManagePage } from './pages/manage/ManagePage'
 import './App.css'
 import { LoginPage } from './pages/login/LoginPage'
+import { ProtectedRoute } from './components/ProtectedRoute'
 
 export function App() {
     const [habits, setHabits] = useState([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    
+    async function fetchHabits(){
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/habits', {
+            headers: {
+            'Authorization': `Bearer ${token}`
+        }});
+        const data = await response.json();
+        setHabits(data);
+    }
 
     useEffect(() => {
-        async function fetchHabits(){
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/habits', {
-                headers: {
-                'Authorization': `Bearer ${token}`
-            }});
-            const data = await response.json();
-            setHabits(data);
-        }
         fetchHabits();
     }, []);
 
     return (
         <Routes>
             <Route path="/login" element = {
-                <LoginPage/>
+                <LoginPage fetchHabits={fetchHabits}/>
             } />
             <Route path="/" element=
                 {
+                    <ProtectedRoute>
                     <HomePage
                         habits={habits}
                         setHabits={setHabits}
@@ -38,10 +41,16 @@ export function App() {
                         isCalendarOpen={isCalendarOpen}
                         setIsCalendarOpen={setIsCalendarOpen}
                     />
+                    </ProtectedRoute>
                 } />
-            <Route path="/manage" element={<ManagePage
-                habits={habits}
-                setHabits={setHabits} />} />
+            <Route path="/manage" element={
+                <ProtectedRoute>
+                <ManagePage
+                    habits={habits}
+                    setHabits={setHabits} />
+                </ProtectedRoute>
+            } />
+                
         </Routes>
     );
 }
