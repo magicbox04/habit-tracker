@@ -5,7 +5,7 @@ import { ManagePage } from './pages/manage/ManagePage'
 import './App.css'
 import { LoginPage } from './pages/login/LoginPage'
 import { ProtectedRoute } from './components/ProtectedRoute'
-
+import { SignUpPage } from './pages/login/SignUpPage'
 export function App() {
     const [habits, setHabits] = useState([]);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -29,6 +29,9 @@ export function App() {
         <Routes>
             <Route path="/login" element = {
                 <LoginPage fetchHabits={fetchHabits}/>
+            } />
+            <Route path="/signup" element = {
+                <SignUpPage/>
             } />
             <Route path="/" element=
                 {

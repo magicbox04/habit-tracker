@@ -9,10 +9,8 @@ router.post('/signup', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // 여기서 bcrypt.hash로 비밀번호 해싱
         const password_hash = await bcrypt.hash(password, 10);
 
-        // 여기서 pool.query로 users 테이블에 INSERT (email, password_hash)
         const result = await pool.query(
             'INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id, email',
             [email, password_hash]
