@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { HomePage } from './pages/home/HomePage'
 import { ManagePage } from './pages/manage/ManagePage'
 import './App.css'
+import { LoginPage } from './pages/login/LoginPage'
 
 export function App() {
     const [habits, setHabits] = useState([]);
@@ -11,7 +12,11 @@ export function App() {
 
     useEffect(() => {
         async function fetchHabits(){
-            const response = await fetch('/api/habits');
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/habits', {
+                headers: {
+                'Authorization': `Bearer ${token}`
+            }});
             const data = await response.json();
             setHabits(data);
         }
@@ -20,6 +25,9 @@ export function App() {
 
     return (
         <Routes>
+            <Route path="/login" element = {
+                <LoginPage/>
+            } />
             <Route path="/" element=
                 {
                     <HomePage
