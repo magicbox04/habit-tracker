@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 export function SignUpPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
     
@@ -15,9 +16,11 @@ export function SignUpPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        
+        const data = await response.json();
         if (response.ok) {  
             navigate('/login'); 
+        } else {
+            setErrorMessage(data.console.error);
         }
     }
     return (<>
@@ -35,6 +38,8 @@ export function SignUpPage() {
             }}>
             Sign up
             </button>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+
             <Link to="/login">Already have an account? Login</Link>
         </div>
     </>

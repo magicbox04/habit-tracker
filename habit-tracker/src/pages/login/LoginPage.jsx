@@ -4,6 +4,7 @@ import { ToSignUpPageButton } from "./ToSignUpPageButton";
 export function LoginPage({fetchHabits}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate();
     
@@ -19,6 +20,8 @@ export function LoginPage({fetchHabits}) {
             localStorage.setItem('token', data.token);
             await fetchHabits();
             navigate('/'); 
+        } else {
+            setErrorMessage(data.error);
         }
     }
     return (<>
@@ -36,6 +39,8 @@ export function LoginPage({fetchHabits}) {
             }}>
             Login
             </button>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+
             <ToSignUpPageButton/>
             
         </div>
