@@ -15,9 +15,10 @@ export function AddHabitModal({ setIsAddModalOpen, habits, setHabits }) {
     }
 
     async function handleSave() {
+        const token = localStorage.getItem('token');
         const response = await fetch ('/api/habits', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify({
                 name: name,
                 expectedDays: expectedDays

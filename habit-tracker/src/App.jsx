@@ -11,15 +11,16 @@ export function App() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isCalendarOpen, setIsCalendarOpen] = useState(false);
     
-    async function fetchHabits(){
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/habits', {
-            headers: {
+    async function fetchHabits() {
+    const token = localStorage.getItem('token');
+    const response = await fetch('/api/habits', {
+        headers: {
             'Authorization': `Bearer ${token}`
-        }});
-        const data = await response.json();
-        setHabits(data);
-    }
+        }
+    });
+    const data = await response.json();
+    setHabits(data);
+}
 
     useEffect(() => {
         fetchHabits();

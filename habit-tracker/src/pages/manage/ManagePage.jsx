@@ -20,10 +20,11 @@ export function ManagePage({ habits, setHabits }) {
         });
 
         const updatedHabit = updatedHabits.find((h) => h.id === habitId)
+        const token = localStorage.getItem('token');
 
         await fetch(`/api/habits/${habitId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json',  'Authorization': `Bearer ${token}`},
             body: JSON.stringify({
                 name: updatedHabit.name,
                 expectedDays: updatedHabit.expectedDays,
@@ -34,10 +35,12 @@ export function ManagePage({ habits, setHabits }) {
     }
 
 
-
+    const token = localStorage.getItem('token');
     async function deleteHabit(habitId) {
         await fetch(`/api/habits/${habitId}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}`},
+
         })
 
         const newHabitlist = habits.filter(item => item.id !== habitId);
@@ -69,7 +72,7 @@ export function ManagePage({ habits, setHabits }) {
 
                                     await fetch(`/api/habits/${habit.id}`, {
                                         method: 'PUT',
-                                        headers: { 'Content-Type': 'application/json' },
+                                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                                         body: JSON.stringify({
                                             name: updatedHabit.name,
                                             expectedDays: updatedHabit.expectedDays,

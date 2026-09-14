@@ -14,7 +14,6 @@ export function HomePage({habits, setHabits, isAddModalOpen, setIsAddModalOpen, 
             <AddHabitButton habits={habits} setHabits={setHabits} isAddModalOpen={isAddModalOpen} setIsAddModalOpen={setIsAddModalOpen} />
             <TodayHabitList habits={habits} setHabits={setHabits} />
             <ToManagePageButton habits={habits} setHabits={setHabits}/>
-            <pre>{JSON.stringify(habits, null, 2)}</pre>
         </div>
     );
 }

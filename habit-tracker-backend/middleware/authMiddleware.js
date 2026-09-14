@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 
 function checkAuth(req, res, next) {
+    console.log('받은 헤더:', req.headers.authorization);  // 임시 추가
+
     const authHeader = req.headers.authorization;  
     
     if (!authHeader) {

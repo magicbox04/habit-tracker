@@ -7,7 +7,7 @@ export function WeekProgress({ habits}) {
 
     const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const monday = dayjs().startOf('isoWeek');
-
+    console.log(habits);
     function getDayStatus(dayName, dateStr) {
         const habitsForDay = habits.filter(h => h.expectedDays.includes(dayName));
         const completedCount = habitsForDay.filter(h => h.completedDates.includes(dateStr)).length;
