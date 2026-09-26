@@ -3,7 +3,8 @@ import { ToHomePageButton } from "../../components/ToHomePageButton";
 export function ManagePage({ habits, setHabits }) {
     const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const [editingHabitId, setEditingHabitId] = useState(null);
-
+    const [sortByPriority, setSortByPriority] = useState(false);
+    const [isAsc, setIsAsc] = useState(true);
     async function toggleDay(day, habitId) {
 
         const updatedHabits = habits.map((h) => {
@@ -24,7 +25,7 @@ export function ManagePage({ habits, setHabits }) {
 
         await fetch(`/api/habits/${habitId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json',  'Authorization': `Bearer ${token}`},
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({
                 name: updatedHabit.name,
                 expectedDays: updatedHabit.expectedDays,
@@ -34,12 +35,34 @@ export function ManagePage({ habits, setHabits }) {
         setHabits(updatedHabits);
     }
 
+    async function togglePriority(priority, habitId) {
+        const updatedHabits = habits.map((h) => {
+            if (h.id !== habitId) {
+                return h;
+            }
+            return { ...h, priority: priority };
+        });
 
+        const updatedHabit = updatedHabits.find((h) => h.id === habitId)
+        const token = localStorage.getItem('token');
+
+        await fetch(`/api/habits/${habitId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                name: updatedHabit.name,
+                expectedDays: updatedHabit.expectedDays,
+                completedDates: updatedHabit.completedDates,
+                priority: priority
+            })
+        })
+        setHabits(updatedHabits);
+    }
     const token = localStorage.getItem('token');
     async function deleteHabit(habitId) {
         await fetch(`/api/habits/${habitId}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}`},
+            headers: { 'Authorization': `Bearer ${token}` },
 
         })
 
@@ -47,10 +70,16 @@ export function ManagePage({ habits, setHabits }) {
         setHabits(newHabitlist);
     }
 
+
+
+    const displayedHabits = sortByPriority
+        ? [...habits].sort((a, b) => isAsc ? a.priority - b.priority : b.priority - a.priority)
+        : habits;
+    console.log('habits:', habits.map(h => ({ name: h.name, priority: h.priority })));
     return (
         <>
             <div className="all-habits-container">
-                {habits.map((habit) => {
+                {displayedHabits.map((habit) => {
                     return (
                         <div
                             key={habit.id}
@@ -67,7 +96,7 @@ export function ManagePage({ habits, setHabits }) {
                                         return { ...h, name: newName };
                                     });
 
-                                    const updatedHabit = updatedHabits.find((h)=> h.id === habit.id);
+                                    const updatedHabit = updatedHabits.find((h) => h.id === habit.id);
 
 
                                     await fetch(`/api/habits/${habit.id}`, {
@@ -98,7 +127,23 @@ export function ManagePage({ habits, setHabits }) {
 
                                 ))
                             }
-
+                            {
+                                editingHabitId === habit.id &&
+                                <div>
+                                    <div>
+                                        <input type="radio" id={`${habit.id}-priority-low`} name={`${habit.id}priority`} value="Low" onChange={() => togglePriority(1, habit.id)} checked={habit.priority === 1} />
+                                        <label htmlFor={`${habit.id}-priority-low`}>Low Priority</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id={`${habit.id}-priority-medium`} name={`${habit.id}priority`} value="Medium" onChange={() => togglePriority(2, habit.id)} checked={habit.priority === 2} />
+                                        <label htmlFor={`${habit.id}-priority-medium`}>Medium Priority</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id={`${habit.id}-priority-high`} name={`${habit.id}priority`} value="High" onChange={() => togglePriority(3, habit.id)} checked={habit.priority === 3} />
+                                        <label htmlFor={`${habit.id}-priority-high`}>High Priority</label>
+                                    </div>
+                                </div>
+                            }
                             <button onClick={() => {
                                 if (editingHabitId === habit.id) {
                                     setEditingHabitId(null);
@@ -121,6 +166,15 @@ export function ManagePage({ habits, setHabits }) {
                     );
                 })}
             </div>
+            <button onClick={() => {
+                if (!sortByPriority) {
+                    setSortByPriority(true);
+                } else {
+                    setIsAsc(!isAsc);
+                }
+            }}>
+                {sortByPriority ? (isAsc ? "Priority ↑" : "Priority ↓") : "Sort by Priority"}
+            </button>
             <ToHomePageButton />
         </>
     );

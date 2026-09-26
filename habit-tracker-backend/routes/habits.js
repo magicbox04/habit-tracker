@@ -7,7 +7,8 @@ function toCamelCase(h) {
         id: h.id,
         name: h.name,
         expectedDays: h.expected_days,
-        completedDates: h.completed_dates
+        completedDates: h.completed_dates,
+        priority: h.priority
     };
 }
 const router = express.Router();
@@ -35,15 +36,29 @@ router.get('/:id', checkAuth, async (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Mal request' });
     }
- });      
+ });
+ // = GET /api/habits/priority/ASC
+ router.get('/priority/:type', checkAuth, async (req, res) => { 
+    try {
+        const result = await pool.query('SELECT * FROM habits WHERE user_id = $1 ORDER BY priority $2', [req.userId, req.params.type]);
+        const habits = result.rows.map(toCamelCase);
+
+        res.json(habits);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Mal request' });
+    }
+ }); 
+ 
  // = POST /api/habits
 router.post('/', checkAuth, async (req, res) => {
     try {
-        const { name, expectedDays } = req.body; 
-        
+        const { name, expectedDays } = req.body;
+        const priority = req.body.priority ?? 2;
+
         const result = await pool.query(
-            'INSERT INTO habits (name, expected_days, completed_dates, user_id) VALUES ($1, $2, $3, $4) RETURNING *',
-            [name, expectedDays, [], req.userId]  
+            'INSERT INTO habits (name, expected_days, completed_dates, user_id, priority) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [name, expectedDays, [], req.userId, priority]  
         );
         const habits = result.rows.map(toCamelCase);
 
@@ -56,9 +71,9 @@ router.post('/', checkAuth, async (req, res) => {
 });  
 // = PUT /api/habits/5 
 router.put('/:id', checkAuth, async (req, res) => {
-    const { name, expectedDays, completedDates } = req.body;
+    const { name, expectedDays, completedDates, priority } = req.body;
     try {
-        const result = await pool.query('UPDATE habits SET name = $1, expected_days = $2, completed_dates = $3 WHERE id = $4 AND user_id = $5 RETURNING *', [name, expectedDays, completedDates, req.params.id, req.userId]);
+        const result = await pool.query('UPDATE habits SET name = $1, expected_days = $2, completed_dates = $3, priority = $6 WHERE id = $4 AND user_id = $5 RETURNING *', [name, expectedDays, completedDates, req.params.id, req.userId, priority]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'id not found' });
         }
