@@ -13,6 +13,7 @@ export function App() {
     
     async function fetchHabits() {
     const token = localStorage.getItem('token');
+    if (!token) { return; }
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/habits`, {
         headers: {
             'Authorization': `Bearer ${token}`
