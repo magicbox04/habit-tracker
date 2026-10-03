@@ -18,6 +18,13 @@ export function App() {
             'Authorization': `Bearer ${token}`
         }
     });
+
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        return;
+    }
+
     const data = await response.json();
     setHabits(data);
 }
