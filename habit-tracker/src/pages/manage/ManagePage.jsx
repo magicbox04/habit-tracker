@@ -23,7 +23,7 @@ export function ManagePage({ habits, setHabits }) {
         const updatedHabit = updatedHabits.find((h) => h.id === habitId)
         const token = localStorage.getItem('token');
 
-        await fetch(`/api/habits/${habitId}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/habits/${habitId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({
@@ -46,7 +46,7 @@ export function ManagePage({ habits, setHabits }) {
         const updatedHabit = updatedHabits.find((h) => h.id === habitId)
         const token = localStorage.getItem('token');
 
-        await fetch(`/api/habits/${habitId}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/habits/${habitId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({
@@ -60,7 +60,7 @@ export function ManagePage({ habits, setHabits }) {
     }
     const token = localStorage.getItem('token');
     async function deleteHabit(habitId) {
-        await fetch(`/api/habits/${habitId}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/habits/${habitId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` },
 

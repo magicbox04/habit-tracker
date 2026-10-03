@@ -21,8 +21,7 @@ export function AddHabitModal({ setIsAddModalOpen, habits, setHabits }) {
 
     async function handleSave() {
         const token = localStorage.getItem('token');
-        console.log('보내는 priority:', priority);  // ← 임시 추가
-        const response = await fetch('/api/habits', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/habits`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({

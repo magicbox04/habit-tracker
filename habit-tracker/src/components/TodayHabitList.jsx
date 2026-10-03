@@ -27,7 +27,7 @@ export function TodayHabitList({ habits, setHabits }) {
         const updatedHabit = updatedHabits.find((h) => h.id === habitId)
         const token = localStorage.getItem('token');
 
-        await fetch(`/api/habits/${updatedHabit.id}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/habits/${updatedHabit.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
             body: JSON.stringify({
