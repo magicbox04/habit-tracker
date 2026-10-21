@@ -42,5 +42,5 @@ habit-tracker-backend/    # Express API
 3. Frontend: `cd habit-tracker && npm install && npm start` (point the API URL at your local backend)
 
 ## Screenshots
+<img width="511" height="332" alt="image" src="https://github.com/user-attachments/assets/6d12418a-8bfe-4ef1-9dd9-8ae2c9beaf2f" />
 
-*(add 1-2 screenshots of the deployed app here)*
